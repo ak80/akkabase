@@ -8,7 +8,7 @@ class AkkabaseDb : AbstractActor() {
 
     val log = Logging.getLogger(context.system(), this)
 
-    val map: MutableMap<String, Object> = mutableMapOf()
+    val map: MutableMap<String, Any> = mutableMapOf()
 
     init {
         receive(ReceiveBuilder
