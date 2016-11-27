@@ -7,6 +7,7 @@ import static org.ak80.akkabase.test.Builder.anUniqueInt;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@SuppressWarnings("PMD.MethodNamingConventions")
 public class SetMessageTest {
 
   @Test

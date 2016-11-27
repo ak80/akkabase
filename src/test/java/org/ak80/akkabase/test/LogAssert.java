@@ -14,6 +14,7 @@ import static org.junit.Assert.assertThat;
  * Utility to assert Log and Exception messages by an actor. Don't forget to set
  * akka.loggers = [akka.testkit.TestEventListener] in application.conf
  */
+@SuppressWarnings("PMD.NonStaticInitializer")
 public class LogAssert {
 
   /**
