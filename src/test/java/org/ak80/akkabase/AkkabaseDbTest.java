@@ -46,6 +46,44 @@ public class AkkabaseDbTest {
   }
 
   @Test
+  public void receive_SetMessage_with_same_key_again_then_replace_key_value_in_map() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, Props.create(AkkabaseDb.class));
+    String key = aKey();
+    Integer value0 = anUniqueInt();
+    Integer value1 = anUniqueInt();
+
+    actorRef.tell(new SetMessage(key, value0), ActorRef.noSender());
+
+    // When
+    actorRef.tell(new SetMessage(key, value1), ActorRef.noSender());
+
+    // Then
+    AkkabaseDb akkabaseDb = actorRef.underlyingActor();
+    assertThat(akkabaseDb.getMap().get(key), is(value1));
+  }
+
+  @Test
+  public void receive_SetMessage_with_other_key_then_have_key_value_in_map() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, Props.create(AkkabaseDb.class));
+    String key0 = aKey();
+    String key1 = aKey();
+    Integer value0 = anUniqueInt();
+    Integer value1 = anUniqueInt();
+
+    actorRef.tell(new SetMessage(key0, value0), ActorRef.noSender());
+
+    // When
+    actorRef.tell(new SetMessage(key1, value1), ActorRef.noSender());
+
+    // Then
+    AkkabaseDb akkabaseDb = actorRef.underlyingActor();
+    assertThat(akkabaseDb.getMap().get(key0), is(value0));
+    assertThat(akkabaseDb.getMap().get(key1), is(value1));
+  }
+
+  @Test
   public void receive_SetMessage_then_log() {
     // Given
     SetMessage setMessage = new SetMessage(aKey(), anUniqueInt());
@@ -71,4 +109,3 @@ public class AkkabaseDbTest {
   }
 
 }
-
