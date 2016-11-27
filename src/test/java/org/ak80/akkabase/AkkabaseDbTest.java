@@ -33,7 +33,7 @@ public class AkkabaseDbTest {
   @Test
   public void receive_SetMessage_then_place_key_value_in_map() {
     // Given
-    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, Props.create(AkkabaseDb.class));
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
     String key = aKey();
     Integer value = anUniqueInt();
 

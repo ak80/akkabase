@@ -1,10 +1,16 @@
 package org.ak80.akkabase
 
 import akka.actor.AbstractActor
+import akka.actor.Props
 import akka.event.Logging
 import akka.japi.pf.ReceiveBuilder
 
 class AkkabaseDb : AbstractActor() {
+
+    companion object Factory {
+        @JvmStatic
+        fun create(): Props = Props.create(AkkabaseDb::class.java)
+    }
 
     val log = Logging.getLogger(context.system(), this)
 
@@ -21,5 +27,4 @@ class AkkabaseDb : AbstractActor() {
         log.info("received set request: {}", message)
         map.put(message.key, message.value)
     }
-
 }
