@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import static akka.pattern.Patterns.ask;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static scala.compat.java8.FutureConverters.toJava;
 
 public class SandBoxTest {
@@ -26,6 +27,8 @@ public class SandBoxTest {
   public ExpectedException expectedException = ExpectedException.none();
 
   private static ActorSystem system;
+
+  private ActorRef actorRef;
 
   @BeforeClass
   public static void setUp() {
@@ -41,32 +44,41 @@ public class SandBoxTest {
   @Test
   public void shouldReplyToPingWithPong() throws Exception {
     // Given
-    ActorRef actorRef = system.actorOf(PongActor.create());
+    actorRef = system.actorOf(PongActor.create());
 
     // When
-    Future sFuture = ask(actorRef, "Ping", 1000);
+    CompletableFuture<String> jFuture = askPong("Ping");
 
     // Then
-    CompletionStage<String> cs = toJava(sFuture);
-    CompletableFuture<String> jFuture = (CompletableFuture<String>) cs;
     assertEquals("Pong", jFuture.get(1000, TimeUnit.MILLISECONDS));
   }
 
   @Test
   public void shouldReplyToUnknownMessageWithFailure() throws Exception {
     // Given
-    ActorRef actorRef = system.actorOf(PongActor.create());
+    actorRef = system.actorOf(PongActor.create());
 
     // Then
     expectedException.expect(ExecutionException.class);
 
     // When
-    Future sFuture = ask(actorRef, "unknown", 1000);
-    CompletionStage<String> cs = toJava(sFuture);
-    CompletableFuture<String> jFuture = (CompletableFuture<String>) cs;
+    CompletableFuture<String> jFuture = askPong("unknown");
     jFuture.get(1000, TimeUnit.MILLISECONDS);
+    fail("not reachable");
   }
 
+  @Test
+  public void printToConsole() throws InterruptedException {
+    actorRef = system.actorOf(PongActor.create());
+    askPong("Ping").thenAccept(x -> System.out.println("replied with: " + x));
+    Thread.sleep(1000);
+  }
+
+  public CompletableFuture<String> askPong(String message) {
+    Future sFuture = ask(actorRef, message, 1000);
+    CompletionStage<String> cs = toJava(sFuture);
+    return (CompletableFuture<String>) cs;
+  }
 
   public static class PongActor extends AbstractActor {
 
