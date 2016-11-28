@@ -9,6 +9,7 @@ import java.util.concurrent.CompletionStage;
 import static akka.pattern.Patterns.ask;
 import static scala.compat.java8.FutureConverters.toJava;
 
+@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 public class FutureTools {
 
   public static void tell(Object message, ActorRef actorRef) {

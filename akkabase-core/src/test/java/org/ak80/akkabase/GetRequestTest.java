@@ -13,7 +13,6 @@ public class GetRequestTest {
   public void create_new_then_get_returns_key_value() {
     // Given
     String key = Builder.aKey();
-    Integer value = Builder.anUniqueInt();
 
     // When
     GetRequest getRequest = new GetRequest(key);

@@ -27,6 +27,12 @@ public class SandBoxTest {
 
   private ActorRef actorRef;
 
+  private static final String PING = "Ping";
+
+  private static final String PONG = "Pong";
+
+  private static final int TIME_OUT = 1000;
+
   @BeforeClass
   public static void setUp() {
     system = ActorSystem.create();
@@ -44,10 +50,10 @@ public class SandBoxTest {
     actorRef = system.actorOf(PongActor.create());
 
     // When
-    CompletableFuture<String> jFuture = askPong("Ping");
+    CompletableFuture<String> jFuture = askPong(PING);
 
     // Then
-    assertEquals("Pong", jFuture.get(1000, TimeUnit.MILLISECONDS));
+    assertEquals(PONG, jFuture.get(TIME_OUT, TimeUnit.MILLISECONDS));
   }
 
   @Test
@@ -60,16 +66,16 @@ public class SandBoxTest {
 
     // When
     CompletableFuture<String> jFuture = askPong("unknown");
-    jFuture.get(1000, TimeUnit.MILLISECONDS);
+    jFuture.get(TIME_OUT, TimeUnit.MILLISECONDS);
     fail("not reachable");
   }
 
-  @SuppressWarnings("PMD.JUnitTestsShouldContainAsserts")
+  @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
   @Test
   public void printToConsole() throws InterruptedException {
     actorRef = system.actorOf(PongActor.create());
-    askPong("Ping").thenAccept(x -> System.out.println("replied with: " + x));
-    Thread.sleep(1000);
+    askPong(PING).thenAccept(x -> System.out.println("replied with: " + x));
+    Thread.sleep(TIME_OUT);
   }
 
   public CompletableFuture<String> askPong(String message) {
@@ -85,7 +91,7 @@ public class SandBoxTest {
     @Override
     public PartialFunction receive() {
       return ReceiveBuilder
-          .matchEquals("Ping", s -> sender().tell("Pong", ActorRef.noSender()))
+          .matchEquals(PING, s -> sender().tell(PONG, ActorRef.noSender()))
           .matchAny(x -> sender().tell(new Status.Failure(new Exception("unknown message")), self()))
           .build();
     }
