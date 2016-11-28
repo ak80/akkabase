@@ -26,7 +26,6 @@ public class GetRequestTest {
   public void toString_returns_key_value_in_string() {
     // Given
     String key = Builder.aKey();
-    Integer value = Builder.anUniqueInt();
     GetRequest getRequest = new GetRequest(key);
 
     // When

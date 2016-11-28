@@ -64,6 +64,7 @@ public class SandBoxTest {
     fail("not reachable");
   }
 
+  @SuppressWarnings("PMD.JUnitTestsShouldContainAsserts")
   @Test
   public void printToConsole() throws InterruptedException {
     actorRef = system.actorOf(PongActor.create());
