@@ -9,17 +9,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import scala.PartialFunction;
-import scala.concurrent.Future;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static akka.pattern.Patterns.ask;
+import static org.ak80.akkabase.test.FutureTools.askFuture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static scala.compat.java8.FutureConverters.toJava;
 
 public class SandBoxTest {
 
@@ -75,9 +72,7 @@ public class SandBoxTest {
   }
 
   public CompletableFuture<String> askPong(String message) {
-    Future sFuture = ask(actorRef, message, 1000);
-    CompletionStage<String> cs = toJava(sFuture);
-    return (CompletableFuture<String>) cs;
+    return askFuture(message, actorRef);
   }
 
   public static class PongActor extends AbstractActor {

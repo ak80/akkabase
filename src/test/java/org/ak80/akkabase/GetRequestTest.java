@@ -8,7 +8,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @SuppressWarnings("PMD.MethodNamingConventions")
-public class SetMessageTest {
+public class GetRequestTest {
 
   @Test
   public void create_new_then_get_returns_key_value() {
@@ -17,11 +17,10 @@ public class SetMessageTest {
     Integer value = anUniqueInt();
 
     // When
-    SetMessage setMessage = new SetMessage(key, value);
+    GetRequest getRequest = new GetRequest(key);
 
     // Then
-    assertThat(setMessage.getKey(), is(key));
-    assertThat(setMessage.getValue(), is(value));
+    assertThat(getRequest.getKey(), is(key));
   }
 
   @Test
@@ -29,13 +28,13 @@ public class SetMessageTest {
     // Given
     String key = aKey();
     Integer value = anUniqueInt();
-    SetMessage setMessage = new SetMessage(key, value);
+    GetRequest getRequest = new GetRequest(key);
 
     // When
-    String asString = setMessage.toString();
+    String asString = getRequest.toString();
 
     // Then
-    assertThat(asString, is(String.format("SetMessage %s=%s", key, value)));
+    assertThat(asString, is(String.format("GetRequest %s", key)));
   }
 
 }

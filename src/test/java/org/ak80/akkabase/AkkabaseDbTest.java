@@ -9,8 +9,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.ak80.akkabase.test.Builder.aKey;
 import static org.ak80.akkabase.test.Builder.anUniqueInt;
+import static org.ak80.akkabase.test.FutureTools.*;
 import static org.ak80.akkabase.test.LogAssert.assertLogInfo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -39,11 +42,25 @@ public class AkkabaseDbTest {
     Integer value = anUniqueInt();
 
     // When
-    actorRef.tell(new SetMessage(key, value), ActorRef.noSender());
+    actorRef.tell(new SetRequest(key, value), ActorRef.noSender());
 
     // Then
     AkkabaseDb akkabaseDb = actorRef.underlyingActor();
     assertThat(akkabaseDb.getMap().get(key), is(value));
+  }
+
+  @Test
+  public void receive_SetMessage_then_reply_with_success() throws Exception {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+
+    // When
+    String successKey = askReply(new SetRequest(key, value), actorRef);
+
+    // Then
+    assertThat(successKey, is(key));
   }
 
   @Test
@@ -54,10 +71,10 @@ public class AkkabaseDbTest {
     Integer value0 = anUniqueInt();
     Integer value1 = anUniqueInt();
 
-    actorRef.tell(new SetMessage(key, value0), ActorRef.noSender());
+    actorRef.tell(new SetRequest(key, value0), ActorRef.noSender());
 
     // When
-    actorRef.tell(new SetMessage(key, value1), ActorRef.noSender());
+    actorRef.tell(new SetRequest(key, value1), ActorRef.noSender());
 
     // Then
     AkkabaseDb akkabaseDb = actorRef.underlyingActor();
@@ -73,10 +90,10 @@ public class AkkabaseDbTest {
     Integer value0 = anUniqueInt();
     Integer value1 = anUniqueInt();
 
-    actorRef.tell(new SetMessage(key0, value0), ActorRef.noSender());
+    actorRef.tell(new SetRequest(key0, value0), ActorRef.noSender());
 
     // When
-    actorRef.tell(new SetMessage(key1, value1), ActorRef.noSender());
+    actorRef.tell(new SetRequest(key1, value1), ActorRef.noSender());
 
     // Then
     AkkabaseDb akkabaseDb = actorRef.underlyingActor();
@@ -87,14 +104,60 @@ public class AkkabaseDbTest {
   @Test
   public void receive_SetMessage_then_log() {
     // Given
-    SetMessage setMessage = new SetMessage(aKey(), anUniqueInt());
+    SetRequest setRequest = new SetRequest(aKey(), anUniqueInt());
     ActorRef actorRef = system.actorOf(Props.create(AkkabaseDb.class));
 
     // When
-    Runnable when = () -> actorRef.tell(setMessage, ActorRef.noSender());
+    Runnable when = () -> actorRef.tell(setRequest, ActorRef.noSender());
 
     // Then
-    assertLogInfo(when, "received set request: " + setMessage, actorRef, system);
+    assertLogInfo(when, "received set request: " + setRequest, actorRef, system);
+  }
+
+  @Test
+  public void receive_GetMessage_when_key_exists_then_reply_with_value() throws Exception {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+    tell(new SetRequest(key, value), actorRef);
+
+    // When
+    Object successValue = askReply(new GetRequest(key), actorRef);
+
+    // Then
+    assertThat(successValue, is(value));
+  }
+
+  @Test
+  public void receive_GetMessage_then_log() throws Exception {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+    tell(new SetRequest(key, value), actorRef);
+
+    GetRequest getRequest = new GetRequest(key);
+
+    // When
+    Runnable when = () -> askReply(getRequest, actorRef);
+
+    // Then
+    assertLogInfo(when, "received get request: " + getRequest, actorRef, system);
+  }
+
+  @Test
+  public void receive_GetMessage_when_key_not_exists_then_not_found_exception() throws Exception {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+
+    // When
+    CompletableFuture future = askFuture(new GetRequest(key), actorRef);
+
+    // Then
+    KeyNotFoundException failure = getFail(future);
+    assertThat(failure.getKey(), is(key));
   }
 
   @Test

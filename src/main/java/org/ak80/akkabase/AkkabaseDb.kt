@@ -1,7 +1,9 @@
 package org.ak80.akkabase
 
 import akka.actor.AbstractActor
+import akka.actor.ActorRef
 import akka.actor.Props
+import akka.actor.Status
 import akka.event.Logging
 import akka.japi.pf.ReceiveBuilder
 
@@ -18,13 +20,24 @@ class AkkabaseDb : AbstractActor() {
 
     init {
         receive(ReceiveBuilder
-                .match(SetMessage::class.java, { this.receiveSetMessage(it) })
+                .match(SetRequest::class.java, { this.receiveSetMessage(it) })
+                .match(GetRequest::class.java, { this.receiveGetMessage(it) })
                 .matchAny { o -> log.info("received unknown message {}", o) }
                 .build())
     }
 
-    fun receiveSetMessage(message: SetMessage) {
-        log.info("received set request: {}", message)
-        map.put(message.key, message.value)
+    fun receiveSetMessage(request: SetRequest) {
+        log.info("received set request: {}", request)
+        map.put(request.key, request.value)
+        sender().tell(Status.Success(request.key), ActorRef.noSender());
+    }
+
+    fun receiveGetMessage(request: GetRequest) {
+        log.info("received get request: {}", request)
+        if (map.containsKey(request.key)) {
+            sender().tell(map.get(request.key), ActorRef.noSender())
+        } else {
+            sender().tell(Status.Failure(KeyNotFoundException(request.key)), ActorRef.noSender());
+        }
     }
 }
