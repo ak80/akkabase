@@ -7,14 +7,14 @@ import java.io.Serializable
  */
 
 // SetRequest for insert and update of a key-value-pair
-class SetRequest(val key: String, val value: Any) {
+class SetRequest(val key: String, val value: Any) : Serializable {
 
     override fun toString() = "${this.javaClass.simpleName} $key=$value"
 
 }
 
 // GetRequest for insert and update of a key-value-pair
-class GetRequest(val key: String) {
+class GetRequest(val key: String) : Serializable {
 
     override fun toString() = "${this.javaClass.simpleName} $key"
 
