@@ -6,7 +6,13 @@
 
     <groupId>org.ak80.akkabase</groupId>
     <artifactId>akkabase</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>akkabase-core</module>
+        <module>akkabase-server</module>
+        <module>akkabase-client</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

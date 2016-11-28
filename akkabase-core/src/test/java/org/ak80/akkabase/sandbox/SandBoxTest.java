@@ -1,8 +1,9 @@
-package org.ak80.akkabase;
+package org.ak80.akkabase.sandbox;
 
 import akka.actor.*;
 import akka.japi.pf.ReceiveBuilder;
 import akka.testkit.JavaTestKit;
+import org.ak80.akkabase.test.FutureTools;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -14,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static org.ak80.akkabase.test.FutureTools.askFuture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -72,7 +72,7 @@ public class SandBoxTest {
   }
 
   public CompletableFuture<String> askPong(String message) {
-    return askFuture(message, actorRef);
+    return FutureTools.askFuture(message, actorRef);
   }
 
   public static class PongActor extends AbstractActor {
