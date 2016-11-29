@@ -7,7 +7,7 @@ import akka.actor.ActorSystem;
  */
 public class Launcher {
 
-  private static Launcher launcher = new Launcher(ActorSystem.create("akkabase"));
+  private static Launcher launcher = new Launcher(ActorSystem.create(MessageKt.getServerSystem()));
   private final ActorSystem system;
 
   public Launcher(ActorSystem system) {
@@ -15,7 +15,7 @@ public class Launcher {
   }
 
   public void run(String[] args) {
-    system.actorOf(AkkabaseDb.create(), "akkabase-db");
+    system.actorOf(AkkabaseDb.create(), MessageKt.getDbActor());
   }
 
   public static void main(String[] args) {
@@ -25,6 +25,6 @@ public class Launcher {
   static void setLauncher(Launcher launcher) {
     Launcher.launcher = launcher;
   }
-  
+
 }
 

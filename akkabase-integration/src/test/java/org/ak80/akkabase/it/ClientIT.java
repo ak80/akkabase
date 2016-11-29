@@ -1,5 +1,6 @@
-package org.ak80.akkabase.client;
+package org.ak80.akkabase.it;
 
+import org.ak80.akkabase.client.Client;
 import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
@@ -9,7 +10,9 @@ import static org.ak80.akkabase.test.Builder.anUniqueInt;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ClientIntegrationTest {
+public class ClientIT {
+
+  // TODO setup to run with failsafe
 
   private Client client = new Client("127.0.0.1:2552");
 

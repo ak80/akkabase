@@ -3,6 +3,7 @@ package org.ak80.akkabase.client;
 import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import org.ak80.akkabase.GetRequest;
+import org.ak80.akkabase.MessageKt;
 import org.ak80.akkabase.SetRequest;
 
 import java.util.concurrent.CompletionStage;
@@ -12,15 +13,20 @@ import static scala.compat.java8.FutureConverters.toJava;
 
 public class Client {
 
-  private final ActorSystem system = createActorSystem();
+  private final ActorSystem system;
   private final ActorSelection remoteDb;
 
   public Client(String remoteAddress) {
-    remoteDb = system.actorSelection("akka.tcp://akkabase@" + remoteAddress + "/user/akkabase-db");
+    this(ActorSystem.create("LocalSystem"), remoteAddress);
   }
 
-  protected ActorSystem createActorSystem() {
-    return ActorSystem.create("LocalSystem");
+  public Client(ActorSystem system, String remoteAddress) {
+    this(system, system.actorSelection(MessageKt.getDbActor(remoteAddress)));
+  }
+
+  public Client(ActorSystem system, ActorSelection actorSelection) {
+    this.system = system;
+    this.remoteDb = actorSelection;
   }
 
   public CompletionStage set(String key, Object value) {
