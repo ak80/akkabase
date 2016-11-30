@@ -16,6 +16,7 @@ import static org.ak80.akkabase.test.Builder.anUniqueInt;
 import static org.ak80.akkabase.test.FutureTools.*;
 import static org.ak80.akkabase.test.LogAssert.assertLogInfo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("PMD.MethodNamingConventions")
@@ -170,6 +171,144 @@ public class AkkabaseDbTest {
 
     // Then
     assertLogInfo(when, "received unknown message ", actorRef, system);
+  }
+
+  @Test
+  public void receive_SetIfNotExistsMessage_and_not_exists_then_place_key_value_in_map() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+
+    // When
+    actorRef.tell(new SetIfNotExistsRequest(key, value), ActorRef.noSender());
+
+    // Then
+    AkkabaseDb akkabaseDb = actorRef.underlyingActor();
+    assertThat(akkabaseDb.getMap().get(key), is(value));
+  }
+
+  @Test
+  public void receive_SetIfNotExistsMessage_and_not_exists_return_value() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    Integer value = anUniqueInt();
+
+    // When
+    Object successValue = askReply(new SetIfNotExistsRequest(aKey(), value), actorRef);
+
+    // Then
+    assertThat(successValue, is(value));
+  }
+
+  @Test
+  public void receive_SetIfNotExistsMessage_and_exists_then_dont_place_key_value_in_map() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value0 = anUniqueInt();
+    Integer value1 = anUniqueInt();
+    actorRef.tell(new SetRequest(key, value0), ActorRef.noSender());
+
+    // When
+    actorRef.tell(new SetIfNotExistsRequest(key, value1), ActorRef.noSender());
+
+    // Then
+    AkkabaseDb akkabaseDb = actorRef.underlyingActor();
+    assertThat(akkabaseDb.getMap().get(key), is(value0));
+  }
+
+  @Test
+  public void receive_SetIfNotExistsMessage_exists_then_return_old_value() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value0 = anUniqueInt();
+    Integer value1 = anUniqueInt();
+    actorRef.tell(new SetRequest(key, value0), ActorRef.noSender());
+
+    // When
+    Object successValue = askReply(new SetIfNotExistsRequest(key, value1), actorRef);
+
+    // Then
+    assertThat(successValue, is(value0));
+  }
+
+  @Test
+  public void receive_SetIfNotExistsMessage_then_log() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+
+    SetIfNotExistsRequest setRequest = new SetIfNotExistsRequest(key, value);
+
+    // When
+    Runnable when = () -> actorRef.tell(setRequest, ActorRef.noSender());
+    ;
+
+    // Then
+    assertLogInfo(when, "received set-if-not-exists request: " + setRequest, actorRef, system);
+  }
+
+  @Test
+  public void receive_DeleteMessage_and_exists_then_deleted_in_map() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+    actorRef.tell(new SetRequest(key, value), ActorRef.noSender());
+
+    // When
+    actorRef.tell(new DeleteRequest(key), ActorRef.noSender());
+
+    // Then
+    AkkabaseDb akkabaseDb = actorRef.underlyingActor();
+    assertThat(akkabaseDb.getMap().get(key), is(nullValue()));
+  }
+
+  @Test
+  public void receive_DeleteMessage_and_exists_then_return_true() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+    actorRef.tell(new SetRequest(key, value), ActorRef.noSender());
+
+    // When
+    Object successValue = askReply(new DeleteRequest(key), actorRef);
+
+    // Then
+    assertThat(successValue, is(true));
+  }
+
+  @Test
+  public void receive_DeleteMessage_and_not_exists_then_return_false() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+
+    // When
+    Object successValue = askReply(new DeleteRequest(aKey()), actorRef);
+
+    // Then
+    assertThat(successValue, is(false));
+  }
+
+  @Test
+  public void receive_DeleteMessage_then_log() {
+    // Given
+    TestActorRef<AkkabaseDb> actorRef = TestActorRef.create(system, AkkabaseDb.create());
+    String key = aKey();
+    Integer value = anUniqueInt();
+    actorRef.tell(new SetRequest(key, value), ActorRef.noSender());
+
+    DeleteRequest deleteRequest = new DeleteRequest(key);
+
+    // When
+    Runnable when = () -> actorRef.tell(deleteRequest, ActorRef.noSender());
+
+    // Then
+    assertLogInfo(when, "received delete request: " + deleteRequest, actorRef, system);
   }
 
 }

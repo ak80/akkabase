@@ -22,6 +22,8 @@ class AkkabaseDb : AbstractActor() {
         receive(ReceiveBuilder
                 .match(SetRequest::class.java, { this.receiveSetMessage(it) })
                 .match(GetRequest::class.java, { this.receiveGetMessage(it) })
+                .match(SetIfNotExistsRequest::class.java, { this.receiveSetIfNotExistsMessage(it) })
+                .match(DeleteRequest::class.java, { this.receiveDeleteMessage(it) })
                 .matchAny { o -> log.info("received unknown message {}", o) }
                 .build())
     }
@@ -38,6 +40,24 @@ class AkkabaseDb : AbstractActor() {
             sender().tell(map.get(request.key), ActorRef.noSender())
         } else {
             sender().tell(Status.Failure(KeyNotFoundException(request.key)), ActorRef.noSender());
+        }
+    }
+
+    fun receiveSetIfNotExistsMessage(request: SetIfNotExistsRequest) {
+        log.info("received set-if-not-exists request: {}", request)
+        if (!map.containsKey(request.key)) {
+            map.put(request.key, request.value)
+        }
+        sender().tell(Status.Success(map.get(request.key)), ActorRef.noSender());
+    }
+
+    fun receiveDeleteMessage(request: DeleteRequest) {
+        log.info("received delete request: {}", request)
+        if (map.containsKey(request.key)) {
+            map.remove(request.key)
+            sender().tell(Status.Success(true), ActorRef.noSender());
+        } else {
+            sender().tell(Status.Success(false), ActorRef.noSender());
         }
     }
 }

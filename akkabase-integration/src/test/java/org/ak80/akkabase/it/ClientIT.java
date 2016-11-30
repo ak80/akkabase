@@ -29,4 +29,21 @@ public class ClientIT {
     assertThat(result, is(value));
   }
 
+  @Test
+  public void sendRecord_then_delete_then_setIfNotExists_can_be_retrieved() throws Exception {
+    // Get
+    String key = aKey();
+    int value0 = anUniqueInt();
+    int value1 = anUniqueInt();
+
+    // When
+    client.set(key, value0);
+    client.delete(key);
+    client.setIfNotExists(key, value1);
+
+    // Then
+    Integer result = (Integer) ((CompletableFuture) client.get(key)).get();
+    assertThat(result, is(value1));
+  }
+
 }
