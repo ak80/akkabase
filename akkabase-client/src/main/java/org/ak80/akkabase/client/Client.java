@@ -15,6 +15,8 @@ import static scala.compat.java8.FutureConverters.toJava;
 
 public class Client {
 
+  private final ActorSystem system;
+
   private final ActorSelection remoteDb;
 
   public Client(String remoteAddress) {
@@ -26,6 +28,7 @@ public class Client {
   }
 
   public Client(ActorSystem system, ActorSelection actorSelection) {
+    this.system = system;
     this.remoteDb = actorSelection;
 
     LoggingAdapter log = Logging.getLogger(system, this);
@@ -40,4 +43,7 @@ public class Client {
     return toJava(ask(remoteDb, new GetRequest(key), 2000));
   }
 
+  protected ActorSystem getActorSystem() {
+    return system;
+  }
 }
