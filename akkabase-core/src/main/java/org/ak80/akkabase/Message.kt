@@ -27,4 +27,20 @@ class GetRequest(val key: String) : Serializable {
 
 }
 
+// SetIfNotExists for insert if no pair exists for key
+class SetIfNotExistsRequest(val key: String, val value: Any) : Serializable {
+
+    override fun toString() = "${this.javaClass.simpleName} $key=$value"
+
+}
+
+
+// DeleteRequest delete of a key-value-pair
+class DeleteRequest(val key: String) : Serializable {
+
+    override fun toString() = "${this.javaClass.simpleName} $key"
+
+}
+
+// for key not found
 class KeyNotFoundException(val key: String) : Exception(), Serializable
