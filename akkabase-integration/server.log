@@ -1,3 +1,0 @@
-[INFO] [11/29/2016 22:52:20.854] [main] [akka.remote.Remoting] Starting remoting
-[INFO] [11/29/2016 22:52:21.319] [main] [akka.remote.Remoting] Remoting started; listening on addresses :[akka.tcp://akkabase@192.168.178.22:2552]
-[INFO] [11/29/2016 22:52:21.322] [main] [akka.remote.Remoting] Remoting now listens on addresses: [akka.tcp://akkabase@192.168.178.22:2552]
