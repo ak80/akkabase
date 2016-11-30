@@ -8,6 +8,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@SuppressWarnings("PMD.MethodNamingConventions")
 public class ClientIsolatedTest {
 
   private ActorSystem system;

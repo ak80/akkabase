@@ -10,6 +10,7 @@ import static org.ak80.akkabase.test.Builder.anUniqueInt;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@SuppressWarnings("PMD.MethodNamingConventions")
 public class ClientIT {
 
   private static Client client = new Client("127.0.0.1:2552");

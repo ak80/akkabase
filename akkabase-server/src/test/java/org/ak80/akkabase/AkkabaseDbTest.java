@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+@SuppressWarnings("PMD.MethodNamingConventions")
 public class AkkabaseDbTest {
 
   private static ActorSystem system;

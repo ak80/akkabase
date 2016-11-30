@@ -22,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+@SuppressWarnings("PMD.MethodNamingConventions")
 public class ClientTest {
 
   private static ActorSystem system;
