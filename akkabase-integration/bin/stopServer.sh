@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 echo stopServer
-cat target/server.pid | xargs kill -9
+xargs kill -9 < target/server.pid

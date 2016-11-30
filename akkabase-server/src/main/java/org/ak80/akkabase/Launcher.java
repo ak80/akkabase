@@ -29,7 +29,7 @@ public class Launcher {
     launcher.run(args);
   }
 
-  static void setLauncher(Launcher launcher) {
+  protected static void setLauncher(Launcher launcher) {
     Launcher.launcher = launcher;
   }
 

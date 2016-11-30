@@ -15,9 +15,7 @@ import static scala.compat.java8.FutureConverters.toJava;
 
 public class Client {
 
-  private final ActorSystem system;
   private final ActorSelection remoteDb;
-  private final LoggingAdapter log;
 
   public Client(String remoteAddress) {
     this(ActorSystem.create("LocalSystem"), remoteAddress);
@@ -28,9 +26,9 @@ public class Client {
   }
 
   public Client(ActorSystem system, ActorSelection actorSelection) {
-    this.system = system;
     this.remoteDb = actorSelection;
-    this.log = Logging.getLogger(system, this);
+
+    LoggingAdapter log = Logging.getLogger(system, this);
     log.info("Started client with actor " + actorSelection.pathString());
   }
 
