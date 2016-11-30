@@ -245,7 +245,6 @@ public class AkkabaseDbTest {
 
     // When
     Runnable when = () -> actorRef.tell(setRequest, ActorRef.noSender());
-    ;
 
     // Then
     assertLogInfo(when, "received set-if-not-exists request: " + setRequest, actorRef, system);
