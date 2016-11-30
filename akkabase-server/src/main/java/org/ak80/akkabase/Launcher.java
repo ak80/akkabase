@@ -1,13 +1,20 @@
 package org.ak80.akkabase;
 
 import akka.actor.ActorSystem;
+import com.typesafe.config.ConfigFactory;
 
 /**
  * Main class to run akkabase db
  */
 public class Launcher {
 
-  private static Launcher launcher = new Launcher(ActorSystem.create(MessageKt.getServerSystem()));
+  private static Launcher launcher = new Launcher(
+      ActorSystem.create(
+          MessageKt.getServerSystem(),
+          ConfigFactory.load().getConfig(MessageKt.getServerSystem())
+      )
+  );
+
   private final ActorSystem system;
 
   public Launcher(ActorSystem system) {

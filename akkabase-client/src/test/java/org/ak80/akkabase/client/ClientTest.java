@@ -21,7 +21,7 @@ import static org.ak80.akkabase.test.Builder.aKey;
 import static org.ak80.akkabase.test.Builder.anUniqueInt;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class ClientTest {
@@ -42,7 +42,7 @@ public class ClientTest {
   @Test
   public void init_then_create_akkabasedb_actor() {
     // Given
-    ActorSystem actorSystem = mock(ActorSystem.class);
+    ActorSystem actorSystem = spy(system);
     String remoteAddress = "remote";
 
     // When

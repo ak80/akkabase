@@ -6,7 +6,7 @@ import java.io.Serializable
  * Message for Akka Actors
  */
 
-fun getDbActor(remoteAddress: String) = "akka.tcp://$serverSystem$remoteAddress/user/$dbActor"
+fun getDbActor(remoteAddress: String) = "akka.tcp://$serverSystem@$remoteAddress/user/$dbActor"
 
 val serverSystem = "akkabase"
 

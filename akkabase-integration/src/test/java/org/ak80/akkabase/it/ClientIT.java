@@ -12,8 +12,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ClientIT {
 
-  // TODO setup to run with failsafe
-
   private Client client = new Client("127.0.0.1:2552");
 
   @Test

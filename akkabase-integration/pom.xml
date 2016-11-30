@@ -51,36 +51,43 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <forkMode>always</forkMode>
+                </configuration>
             </plugin>
             <plugin>
-                <groupId>com.bazaarvoice.maven.plugins</groupId>
-                <artifactId>process-exec-maven-plugin</artifactId>
-                <version>0.4</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
                 <executions>
-                    <!--Start process-->
                     <execution>
-                        <id>start-jar</id>
+                        <id>start-server</id>
                         <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>start</goal>
+                            <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <workingDir>app</workingDir>
+                            <executable>bin/runServer.sh</executable>
                             <arguments>
                                 <argument>java</argument>
+                                <argument>-classpath</argument>
+                                <classpath/>
                                 <argument>org.ak80.akkabase.Launcher</argument>
                             </arguments>
                         </configuration>
                     </execution>
-                    <!--Stop Process-->
                     <execution>
-                        <id>stop-jar-process</id>
+                        <id>stop-server</id>
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>stop-all</goal>
+                            <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <executable>bin/stopServer.sh</executable>
+                        </configuration>
                     </execution>
                 </executions>
+
             </plugin>
         </plugins>
     </build>

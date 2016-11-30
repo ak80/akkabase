@@ -2,6 +2,8 @@ package org.ak80.akkabase.client;
 
 import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import org.ak80.akkabase.GetRequest;
 import org.ak80.akkabase.MessageKt;
 import org.ak80.akkabase.SetRequest;
@@ -15,6 +17,7 @@ public class Client {
 
   private final ActorSystem system;
   private final ActorSelection remoteDb;
+  private final LoggingAdapter log;
 
   public Client(String remoteAddress) {
     this(ActorSystem.create("LocalSystem"), remoteAddress);
@@ -27,6 +30,8 @@ public class Client {
   public Client(ActorSystem system, ActorSelection actorSelection) {
     this.system = system;
     this.remoteDb = actorSelection;
+    this.log = Logging.getLogger(system, this);
+    log.info("Started client with actor " + actorSelection.pathString());
   }
 
   public CompletionStage set(String key, Object value) {
