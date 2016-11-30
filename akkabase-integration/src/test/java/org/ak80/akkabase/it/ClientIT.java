@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @SuppressWarnings("PMD.MethodNamingConventions")
 public class ClientIT {
 
-  private Client client = new Client("127.0.0.1:2552");
+  private static Client client = new Client("127.0.0.1:2552");
 
   @Test
   public void sendRecord_can_be_retrieved() throws Exception {
